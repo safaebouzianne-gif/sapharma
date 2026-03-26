@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  
+  <div class="dashboard-header">
+    <h1>Aperçu Global</h1>
+    <p>Bienvenue sur le tableau de bord de gestion SaPharma.</p>
+  </div>
+
+  <div class="charts-grid">
+    
+    <!-- Bar Chart Card -->
+    <div class="chart-card card">
+      <div class="card-header">
+        <h3>Répartition par Catégorie</h3>
+        <span class="badge badge-blue">Produits</span>
+      </div>
+      <div class="chart-container">
+        <canvas #barChart></canvas>
+      </div>
+    </div>
+
+    <!-- Pie Chart Card -->
+    <div class="chart-card card">
+      <div class="card-header">
+        <h3>État des Stocks</h3>
+        <span class="badge badge-green">Évolution</span>
+      </div>
+      <div class="chart-container">
+        <canvas #pieChart></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</div>

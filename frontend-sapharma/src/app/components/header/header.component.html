@@ -1,0 +1,67 @@
+<header class="header-container">
+  
+  <div class="header-left">
+    <div class="search-bar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Rechercher des produits..." />
+    </div>
+  </div>
+
+  <div class="header-center">
+    <!-- Quick Stats Cards directly in header as requested -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon bg-blue-light">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalProduits }}</span>
+          <span class="stat-label">Produits</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon bg-green-light">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalCategories }}</span>
+          <span class="stat-label">Catégories</span>
+        </div>
+      </div>
+
+      <div class="stat-card danger-card">
+        <div class="stat-icon bg-red-light">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value danger-text">{{ produitsExpirant }}</span>
+          <span class="stat-label">Expirés</span>
+        </div>
+      </div>
+
+      <div class="stat-card warning-card">
+        <div class="stat-icon bg-yellow-light">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value warning-text">{{ produitsRupture }}</span>
+          <span class="stat-label">Rupture</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="user-profile">
+      <div class="avatar">
+        {{ authService.currentUserValue?.username?.charAt(0) | uppercase }}
+      </div>
+      <div class="user-info">
+        <div class="name">{{ authService.currentUserValue?.username }}</div>
+        <div class="role">{{ authService.isAdmin() ? 'Admin' : 'Employé' }}</div>
+      </div>
+    </div>
+  </div>
+  
+</header>

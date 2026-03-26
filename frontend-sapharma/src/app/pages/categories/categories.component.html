@@ -1,0 +1,75 @@
+<div class="page-header">
+  <div class="header-titles">
+    <h1>Gestion des Catégories</h1>
+    <p>Organisez vos produits en catégories ({{ categories.length }} catégories)</p>
+  </div>
+
+  <div class="header-actions">
+    <button *ngIf="authService.isAdmin()" class="btn-primary" (click)="openModal()">
+      + Nouvelle Catégorie
+    </button>
+  </div>
+</div>
+
+<div class="cat-grid">
+  <!-- Cartes Catégories -->
+  <div class="cat-card card" *ngFor="let cat of categories">
+    <div class="cat-card-header">
+      <div class="icon-bulb bg-green-light">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <div class="cat-count">
+        <span class="badge badge-blue">{{ cat.count || 0 }} produits</span>
+      </div>
+    </div>
+
+    <div class="cat-card-body">
+      <h3>{{ cat.nom }}</h3>
+      <p>{{ cat.description }}</p>
+    </div>
+
+    <div class="cat-card-footer" *ngIf="authService.isAdmin()">
+      <button class="btn-icon edit" (click)="openModal(cat)" title="Modifier">✏️</button>
+      <button class="btn-icon delete" (click)="deleteCategory(cat.id)" title="Supprimer">🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Ajout/Modif -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal card">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Modifier la catégorie' : 'Nouvelle Catégorie' }}</h2>
+      <button class="btn-icon" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="successMessage" class="success-box">
+        <div class="success-icon">✓</div>
+        <h3>{{ successMessage }}</h3>
+        <p>Le formulaire va se fermer automatiquement...</p>
+      </div>
+
+      <form [formGroup]="catForm" *ngIf="!successMessage">
+        <div class="form-group">
+          <label>Nom de la catégorie</label>
+          <input type="text" class="form-control" formControlName="nom">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" formControlName="description" rows="3"></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer" *ngIf="!successMessage">
+      <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+      <button class="btn-primary" [disabled]="catForm.invalid || loading" (click)="saveCategory()">
+        <span *ngIf="loading" class="spinner-small"></span>
+        {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>

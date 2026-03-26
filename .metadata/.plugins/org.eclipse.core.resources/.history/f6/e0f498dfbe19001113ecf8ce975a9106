@@ -1,0 +1,50 @@
+package com.eclipse.main.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import lombok.RequiredArgsConstructor;
+import com.eclipse.main.service.ProduitService;
+
+@RestController
+@RequestMapping("/api/dashboard")
+@RequiredArgsConstructor
+public class DashboardController {
+
+    private final ProduitService produitService;
+    
+
+    public DashboardController(ProduitService produitService) {
+		this.produitService = produitService;
+	}
+
+	// 👑 DASHBOARD ADMIN
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin")
+    public Map<String, Object> dashboardAdmin(){
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("totalProduits", produitService.totalProduits());
+        data.put("rupture", produitService.totalRupture());
+        data.put("expires", produitService.totalExpires());
+
+        return data;
+    }
+
+    // 👨‍💼 DASHBOARD EMPLOYE
+    @PreAuthorize("hasAuthority('EMPLOYE')")
+    @GetMapping("/employe")
+    public Map<String, Object> dashboardEmploye(){
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("totalProduits", produitService.totalProduits());
+        data.put("rupture", produitService.totalRupture());
+
+        return data;
+    }
+}

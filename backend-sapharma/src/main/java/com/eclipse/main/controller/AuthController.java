@@ -1,0 +1,61 @@
+package com.eclipse.main.controller;
+import java.util.Map;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
+
+import com.eclipse.main.entity.Utilisateur;
+import com.eclipse.main.repository.*;
+import com.eclipse.main.security.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+
+public class AuthController {
+
+    private final UtilisateurRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    
+
+    public AuthController(UtilisateurRepository userRepo, PasswordEncoder passwordEncoder, JwtService jwtService) {
+		super();
+		this.userRepo = userRepo;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
+	}
+
+
+	@PostMapping("/login")
+    public Map<String,String> login(
+            @RequestBody Utilisateur request){
+
+        Utilisateur user =
+                userRepo.findByUsername(
+                        request.getUsername())
+                        .orElseThrow();
+
+        if(!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())){
+            throw new RuntimeException("Bad credentials");
+        }
+
+        String token = jwtService.generateToken(
+                user.getUsername(),
+                user.getRole().name());
+
+        return Map.of(
+                "token", token,
+                "role", user.getRole().name(),
+                "username", user.getUsername()
+        );
+    }
+}

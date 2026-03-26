@@ -1,0 +1,198 @@
+<div class="page-header">
+  <div class="header-titles">
+    <h1>Gestion des Produits</h1>
+    <p>Gérez l'inventaire complet de la parapharmacie ({{ filteredProduits.length }} produits)</p>
+  </div>
+
+  <div class="header-actions">
+    <button *ngIf="authService.isAdmin()" class="btn-primary" (click)="openModal()">
+      + Nouveau Produit
+    </button>
+  </div>
+</div>
+
+<div class="controls-bar card">
+  <div class="search-filter">
+    <input type="text" class="form-control" placeholder="Rechercher par nom..." [(ngModel)]="searchQuery">
+    <select class="form-control" [(ngModel)]="selectedCategoryId">
+      <option value="">Toutes les catégories</option>
+      <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nom }}</option>
+    </select>
+  </div>
+
+  <div class="view-toggles">
+    <button class="btn-icon" [class.active]="viewMode === 'card'" (click)="viewMode = 'card'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+    </button>
+    <button class="btn-icon" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+      </svg>
+    </button>
+
+  </div>
+</div>
+
+<!-- Mode 1: Liste (Table) -->
+<div class="card table-container" *ngIf="viewMode === 'list'">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Nom</th>
+        <th>Prix</th>
+        <th>Quantité</th>
+        <th>Expiration</th>
+        <th *ngIf="authService.isAdmin()">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of filteredProduits"
+        [ngClass]="{'row-expired': isExpired(p.dateExpiration), 'row-outofstock': isOutOfStock(p.quantite)}">
+        <td>
+          <div class="prod-img">
+            <img *ngIf="p.image; else noImg" [src]="'http://localhost:8080/uploads/' + p.image" alt="Produit"
+              onerror="this.src='/assets/placeholder.png'">
+            <ng-template #noImg>
+              <div class="placeholder-img"></div>
+            </ng-template>
+          </div>
+        </td>
+        <td>
+          <strong>{{ p.nom }}</strong>
+          <div class="text-muted text-sm">{{ p.description }}</div>
+        </td>
+        <td>{{ p.prix }} dh</td>
+        <td>
+          <span class="badge" [ngClass]="isOutOfStock(p.quantite) ? 'badge-danger' : 'badge-success'">
+            {{ p.quantite }} en stock
+          </span>
+        </td>
+        <td>
+          <span [ngClass]="{'text-danger font-bold': isExpired(p.dateExpiration)}">
+            {{ p.dateExpiration | date:'dd/MM/yyyy' }}
+          </span>
+        </td>
+        <td *ngIf="authService.isAdmin()">
+          <div class="action-btns">
+            <button class="btn-icon edit" (click)="openModal(p)">✏️</button>
+            <button class="btn-icon delete" (click)="deleteProduct(p.id)">🗑️</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="filteredProduits.length === 0">
+        <td colspan="6" class="text-center py-4">Aucun produit trouvé.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Mode 2: Cartes -->
+<div class="cards-grid" *ngIf="viewMode === 'card'">
+  <div class="product-card card" *ngFor="let p of filteredProduits"
+    [ngClass]="{'border-danger': isExpired(p.dateExpiration) || isOutOfStock(p.quantite)}">
+    <div class="card-img-top">
+      <img *ngIf="p.image; else noImgCard" [src]="'http://localhost:8080/uploads/' + p.image" alt="Produit"
+        onerror="this.src='/assets/placeholder.png'">
+      <ng-template #noImgCard>
+        <div class="placeholder-img large"></div>
+      </ng-template>
+
+      <div class="status-badges">
+        <span class="badge badge-danger" *ngIf="isExpired(p.dateExpiration)">Expiré</span>
+        <span class="badge badge-warning" *ngIf="isOutOfStock(p.quantite)">Rupture</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h4>{{ p.nom }}</h4>
+      <p class="desc">{{ p.description }}</p>
+      <div class="meta">
+        <span class="price">{{ p.prix }} dh</span>
+        <span class="stock">{{ p.quantite }} unités</span>
+      </div>
+      <div class="exp-date">Exp: {{ p.dateExpiration | date:'dd/MM/yyyy' }}</div>
+    </div>
+    <div class="card-footer" *ngIf="authService.isAdmin()">
+      <button class="btn-action edit" (click)="openModal(p)">Modifier</button>
+      <button class="btn-action delete" (click)="deleteProduct(p.id)">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Ajout/Modif -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal card">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Modifier le produit' : 'Nouveau Produit' }}</h2>
+      <button class="btn-icon" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="successMessage" class="success-box">
+        <div class="success-icon">✓</div>
+        <h3>{{ successMessage }}</h3>
+        <p>Le formulaire va se fermer automatiquement...</p>
+      </div>
+
+      <form [formGroup]="productForm" *ngIf="!successMessage">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom du produit</label>
+            <input type="text" class="form-control" formControlName="nom">
+          </div>
+          <div class="form-group">
+            <label>Catégorie</label>
+            <select class="form-control" formControlName="categorieId">
+              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nom }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" formControlName="description" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prix (dh)</label>
+            <input type="number" step="0.01" class="form-control" formControlName="prix">
+          </div>
+          <div class="form-group">
+            <label>Quantité</label>
+            <input type="number" class="form-control" formControlName="quantite">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date Expiration</label>
+            <input type="date" class="form-control" formControlName="dateExpiration">
+          </div>
+          <div class="form-group">
+            <label>Image (Optionnel)</label>
+            <input type="file" class="form-control" (change)="onFileSelected($event)">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer" *ngIf="!successMessage">
+      <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+      <button class="btn-primary" [disabled]="productForm.invalid || loading" (click)="saveProduct()">
+        <span *ngIf="loading" class="spinner-small"></span>
+        {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+  </div>
+</div>

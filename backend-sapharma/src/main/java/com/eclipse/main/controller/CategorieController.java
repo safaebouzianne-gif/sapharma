@@ -1,0 +1,57 @@
+package com.eclipse.main.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import com.eclipse.main.entity.Categorie;
+import com.eclipse.main.entity.Produit;
+import com.eclipse.main.repository.CategorieRepository;
+import com.eclipse.main.service.CategorieService;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/categories")
+
+
+
+public class CategorieController {
+
+    private final CategorieService categorieServ;
+
+    public CategorieController(CategorieService categorieServ) {
+		super();
+		this.categorieServ = categorieServ;
+	}
+
+	// ADMIN seulement
+	    @PreAuthorize("hasRole('ADMIN')")
+	    @PostMapping
+	    public Categorie addCategorie(@RequestBody Categorie categorie){
+	        return categorieServ.addCategorie(categorie);
+	    }
+        // modifier categorie
+	    @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/{id}")
+        public Categorie updateCategorie(
+                @PathVariable Long id,
+                @RequestBody Categorie categorie){
+
+            return categorieServ.updateCategorie(id, categorie);
+        }
+
+        // supprimer categorie
+	    @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/{id}")
+        public void deleteCategorie(@PathVariable Long id){
+            categorieServ.deleteCategorie(id);
+	    }
+
+    // ADMIN + EMPLOYE
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYE')")
+    @GetMapping
+    public List<Categorie> getAllCategories(){
+        return categorieServ.getAllCategories();
+    }
+}
