@@ -25,8 +25,9 @@ sapharma/
  │    ├── package.json
  ├── .gitignore
  └── README.md
+---
+## 🚀 Getting Started
 
-🚀 Getting Started
 Prerequisites
 Java 17+
 Maven
@@ -45,8 +46,8 @@ npm install
 ng serve
 
 The frontend will run at: http://localhost:4200
-
-💻 Usage
+---
+## 💻 Usage
 Open the frontend URL in your browser: http://localhost:4200
 Login using default admin credentials:
 Username: admin
@@ -55,17 +56,19 @@ or default employe credentials:
 Username: employe
 Password: employe123
 Manage products, categories, and stock easily!
-
-📝 Notes
+---
+## 📝 Notes
 Make sure to configure your database connection in application.properties (backend).
 Frontend communicates with backend via http://localhost:8080/api/....
 You can extend the project with sales, reporting, or notifications.
-📁 Contribution
+---
+## 📁 Contribution
 
 Feel free to fork this repo and submit pull requests.
 For issues or feedback, open an issue in this repository.
 
-📜 License
+---
+## 📜 License
 
 This project is licensed under the MIT License – see the LICENSE file for details.
 
@@ -73,8 +76,7 @@ Sapharma – Pharmacy management made simple.
 
 
 ---
-
-### ✅ Next Step
+## ✅ Next Step
 1. Add this **README.md** to your repo.
 2. Push to GitHub:
 
