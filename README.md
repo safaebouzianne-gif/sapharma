@@ -91,13 +91,3 @@ Sapharma – Pharmacy management made simple.
 
 
 ---
-
-## ✅ Next Step
-
-1. Add this **README.md** to your repo.
-2. Push to GitHub:
-
-```bash
-git add README.md
-git commit -m "Add professional README"
-git push
